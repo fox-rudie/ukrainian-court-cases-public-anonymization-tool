@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "entities": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "occurence": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "mask": {
+            "type": "string"
+          },
+          "grammatical_gender": {
+            "type": "string",
+            "enum": ["MASCULINE", "FEMININE", "NEUTER"]
+          },
+          "grammatical_case": {
+            "type": "string",
+            "enum": [
+              "NOMINATIVE",
+              "GENITIVE",
+              "DATIVE",
+              "ACCUSATIVE",
+              "INSTRUMENTAL",
+              "LOCATIVE",
+              "VOCATIVE"
+            ]
+          }
+        },
+        "required": [
+          "occurence",
+          "mask",
+          "grammatical_gender",
+          "grammatical_case"
+        ]
+      }
+    }
+  },
+  "required": ["entities"]
+}
