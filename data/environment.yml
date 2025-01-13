@@ -1,0 +1,11 @@
+name: document_processing
+channels:
+  - defaults
+dependencies:
+  - python=3.9
+  - requests
+  - tqdm
+  - striprtf
+  - pip
+  - pip:
+      - nbformat
