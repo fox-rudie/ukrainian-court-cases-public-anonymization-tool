@@ -3,3 +3,5 @@ dict/ubertext_freq.csv
 dict/ubertext_freq.csv.xz
 .DS_Store
 dict/generated/*
+deduplication/start_data/*
+deduplication/end_data/*
