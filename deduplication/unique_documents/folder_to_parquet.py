@@ -3,7 +3,7 @@ import pandas as pd
 import re
 python_file_path = os.path.dirname(os.path.abspath(__file__))
 
-filenames = os.listdir(f'{python_file_path}/corpus/')
+filenames = os.listdir(f'{python_file_path}/supreme_all/')
 
 def normalize_file(file): 
     # Remove non-utf-8 characters
@@ -19,7 +19,7 @@ def normalize_file(file):
 # read files and create list of dictionaries
 documents = []
 for filename in filenames:
-    with open(f'{python_file_path}/corpus/{filename}', 'r', encoding='utf-8') as f:
+    with open(f'{python_file_path}/supreme_all/{filename}', 'r', encoding='utf-8') as f:
         try:
             documents.append({
                 'id': filename.split('.')[0],
@@ -30,4 +30,4 @@ for filename in filenames:
 
 df = pd.DataFrame(documents)
 df = df.sort_values('id').reset_index(drop=True)  # Sort by id and reset index
-df.to_parquet(f'{python_file_path}/2024-court-decisions.parquet') 
+df.to_parquet(f'{python_file_path}/2024-supreme-court-decisions.parquet') 
