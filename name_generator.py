@@ -97,6 +97,8 @@ class NameGenerator:
         return case_dict
 
     def _load_all_data(self):
+        self.lname_freq = self._load_freq_df("lname_freq_dict.csv")
+
         for gender in ['male', 'female']:
             self.fname_freq[gender] = self._load_freq_df(f"{gender}_fname_freq_dict.csv")
             self.pname_freq[gender] = self._load_freq_df(f"{gender}_pname_freq_dict.csv")
@@ -104,13 +106,8 @@ class NameGenerator:
             self.fname_cases[gender] = self._load_case_dict(self.case_path / f"person_{gender}_fname.txt")
             self.pname_cases[gender] = self._load_case_dict(self.case_path / f"person_{gender}_pname.txt")
 
-            lname_path = self.case_path / f"person_{gender}_lname.txt"
-            if lname_path.exists():
-                self.lname_cases[gender] = self._load_case_dict(lname_path)
+            self.lname_cases[gender] = self._load_case_dict(self.case_path / f"person_{gender}_lname.txt")
 
-        self.lname_freq = self._load_freq_df("lname_freq_dict.csv")
-        if not self.lname_cases:
-            self.lname_cases["default"] = self._load_case_dict(self.case_path / "person_lname.txt")
 
     def _load_freq_df(self, filename: str) -> pd.DataFrame:
         df = pd.read_csv(self.base_path / filename)
@@ -126,6 +123,7 @@ class NameGenerator:
             df['freq_in_corpus'] = np.minimum(df['freq_in_corpus'], cap)
 
         elif strat == NormalizationStrategy.DROP_TOP:
+            print('Dropping top', self.normalization_config.drop_top_n)
             n = self.normalization_config.drop_top_n
             df = df.sort_values(by='freq_in_corpus', ascending=False).iloc[n:]
 
@@ -142,15 +140,20 @@ class NameGenerator:
 
         fname_df = self.fname_freq[gender]
         pname_df = self.pname_freq[gender]
-        lname_df = self.lname_freq
 
         first_name = np.random.choice(fname_df['name'], p=fname_df['prob'])
         patronymic = np.random.choice(pname_df['name'], p=pname_df['prob'])
-        last_name = np.random.choice(lname_df['name'], p=lname_df['prob'])
 
         fname_cases = self.fname_cases[gender].get(first_name, {})
         pname_cases = self.pname_cases[gender].get(patronymic, {})
-        lname_cases = self.lname_cases.get(gender, self.lname_cases.get("default", {})).get(last_name, {})
+
+        lname_df = self.lname_freq
+        
+        while True:
+            last_name = np.random.choice(lname_df['name'], p=lname_df['prob'])
+            lname_cases = self.lname_cases[gender].get(last_name)
+            if lname_cases:
+                break
 
         case_map = {
             'v_naz': 'nominative',
@@ -177,8 +180,7 @@ class NameGenerator:
 
         return result
 
-if __name__ == "__main__":
-    name_generator = NameGenerator()
-    print(name_generator.generate("male", seed=1))
-    print(name_generator.generate("male", seed=1))
-    print(name_generator.generate("male", seed=1))
+# if __name__ == "__main__":
+#     name_generator = NameGenerator()
+#     for i in range(10):
+#         print(name_generator.generate("female"))
