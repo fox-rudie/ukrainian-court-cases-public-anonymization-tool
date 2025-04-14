@@ -8,3 +8,4 @@ deduplication/end_data/*
 deduplication/unique_documents/**/*.txt
 deduplication/unique_documents/*.zip
 deduplication/unique_documents/2024-court-decisions.parquet
+ner-uk/*
